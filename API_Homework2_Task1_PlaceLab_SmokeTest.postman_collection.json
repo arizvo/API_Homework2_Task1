@@ -1,0 +1,240 @@
+{
+	"info": {
+		"_postman_id": "e72968e1-b125-4578-ae4c-4578f0d8ab30",
+		"name": "API_Homework2_Task1_PlaceLab_SmokeTest",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27457597",
+		"_collection_link": "https://martian-desert-305865.postman.co/workspace/a74cfbfb-2571-4113-a4eb-6841646f9c45/collection/27457597-e72968e1-b125-4578-ae4c-4578f0d8ab30?action=share&creator=27457597&source=collection_link"
+	},
+	"item": [
+		{
+			"name": "GetToken_ValidCredentials",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"pm.collectionVariables.set(\"token\", jsonData.api_token);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "{{email}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}/api/v2/sessions",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v2",
+						"sessions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateReport",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var responseJson = JSON.parse(responseBody);",
+							"pm.collectionVariables.set(\"id\", responseJson.id);",
+							"",
+							"pm.test(\"Verify that report is successfully created\", () => {",
+							"    pm.expect(responseJson.state).to.be.a('string');",
+							"    pm.expect(responseJson.state).to.be.eql('CREATED');",
+							"    pm.expect(responseJson.state).to.not.be.eql('ERROR');",
+							"    pm.expect(responseJson.state).to.not.be.eql('INVALID FILE');",
+							"})",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/Users/Rizvo/Postman/files/API_data_extraction_sample.txt"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}/api/v2/reports/data_extraction?name=New%20API%20test&country_code=US",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v2",
+						"reports",
+						"data_extraction"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "New%20API%20test"
+						},
+						{
+							"key": "country_code",
+							"value": "US"
+						},
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CheckStatus",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var responseJson = JSON.parse(responseBody);",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"if (responseJson.state != \"FINISHED\") {",
+							"    console.log(\"Retry request\");",
+							"    retryRequest();",
+							"    return;",
+							"} else {",
+							"    validateResponse();",
+							"    return;",
+							"}",
+							"",
+							"function retryRequest () {",
+							"    if (responseJson.state != \"INVALID FILE\") {",
+							"        postman.setNextRequest(pm.collectionVariables.get(\"id\"));",
+							"    } else {",
+							"        validateResponse();",
+							"        return;",
+							"    }",
+							"}",
+							"",
+							"function validateResponse () {",
+							"    pm.test(\"Verify response\", () => {",
+							"        pm.expect(pm.response.code).to.eql(200);",
+							"        pm.expect(responseJson.state).to.be.a('string');",
+							"        pm.expect(responseJson.state).to.be.eql('FINISHED');",
+							"    });",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/v2/reports/{{id}}/status",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"v2",
+						"reports",
+						"{{id}}",
+						"status"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "token",
+			"value": ""
+		},
+		{
+			"key": "url",
+			"value": "https://demo.placelab.com",
+			"type": "string"
+		},
+		{
+			"key": "id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

@@ -1,8 +1,13 @@
-{\rtf1\ansi\ansicpg1252\cocoartf2639
-\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
-{\colortbl;\red255\green255\blue255;}
-{\*\expandedcolortbl;;}
-\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+Feature: Smoke Test
 
-\f0\fs24 \cf0 readme}
+This is a demo version of the PlaceLab application that is able to get information from websites.
+This test verifies that a user is able to log in with their account credentials and create a Data Extraction Report.
+
+Scenario: Validate that the user can log in and create a Data Extraction Report.
+
+Given the user has an account for the application
+
+When the user goes to create a report
+And the user enters all necessary data
+
+Then the Data Extraction Report should be created
